@@ -2,7 +2,7 @@
 import React from 'react';
 import { auth } from '../../../firebaseApp';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 interface FirebaseAuthComponentProps {
   email: string;
