@@ -11,8 +11,21 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const [success, setSuccess] = useState(false);
+
+  const handleSignInSuccess = () => {
+    router.push("/app/Dashboard");
+  };
+
   useEffect(() => {
+    const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
+      if (success) {
+        handleSignInSuccess(); // Call the callback function for client-side navigation
+        setSuccess(true);
+      }
+    };
     setIsLoading(false);
+    
   }, []);
 
   if (isLoading) {
@@ -22,7 +35,7 @@ export default function LoginPage() {
   return (
     <div>
       <h2>Sign In</h2>
-      <FirebaseAuthComponent email={email} password={password} setEmail={setEmail} setPassword={setPassword} />
+      <FirebaseAuthComponent email={email} password={password} setEmail={setEmail} setPassword={setPassword} onSuccess={handleSignInSuccess} />
     </div>
   );
 }

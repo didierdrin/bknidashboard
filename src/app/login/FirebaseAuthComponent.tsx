@@ -4,21 +4,24 @@ import { auth } from '../../../firebaseApp';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/router';
 
+
 interface FirebaseAuthComponentProps {
   email: string;
   password: string;
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
+  onSuccess: () => void;
 }
 
-export default function FirebaseAuthComponent({ email, password, setEmail, setPassword }: FirebaseAuthComponentProps) {
+export default function FirebaseAuthComponent({ email, password, setEmail, setPassword, onSuccess }: FirebaseAuthComponentProps) {
   const router = useRouter();
 
   const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/app/Dashboard");
+      //router.push("/app/Dashboard");
+      onSuccess();
     } catch (error) {
       alert("Login failed. Please check your credentials.");
     }

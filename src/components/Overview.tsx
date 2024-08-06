@@ -56,7 +56,7 @@ const Overview = () => {
         },
       ],
     });
-  }, [timeFrame]);
+  }, [timeFrame, chartData.datasets]);
 
   const options = {
     responsive: true,
