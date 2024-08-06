@@ -19,14 +19,15 @@ export default function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
-      if (success) {
-        console.log("Success login!!!");
-      }
-    };
-    setIsLoading(false);
-  }, [success]);
+  const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      // Your sign-in logic here
+      setSuccess(true); // Set success only after successful sign-in
+    } catch (error) {
+      alert("Login failed. Please check your credentials.");
+    }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
