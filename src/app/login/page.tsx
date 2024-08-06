@@ -11,8 +11,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-
-
   const [success, setSuccess] = useState(false);
 
   const handleSignInSuccess = () => {
@@ -24,7 +22,7 @@ export default function LoginPage() {
   useEffect(() => {
     const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
       if (success) {
-        handleSignInSuccess(); // Call navigation logic on client-side
+        console.log("Success login!!!");
       }
     };
     setIsLoading(false);
