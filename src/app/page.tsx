@@ -1,27 +1,23 @@
-// pages/index.tsx
-// pages/index.tsx
+
+// app/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebaseApp';
 import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+
+// Create a client-side only component for router usage
+const ClientSideRouterHandler = dynamic(() => import('./ClientSideRouterHandler'), { ssr: false });
 
 export default function Home() {
-  const router = useRouter();
   const [user, loading, error] = useAuthState(auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
 
   const provider = new GoogleAuthProvider();
-
-  useEffect(() => {
-    if (!loading && user) {
-      router.push('/dash');
-    }
-  }, [user, loading, router]);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +41,7 @@ export default function Home() {
   }
 
   if (user) {
-    return null;
+    return <ClientSideRouterHandler />;
   }
 
   return (
