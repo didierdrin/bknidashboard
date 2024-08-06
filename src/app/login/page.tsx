@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Use next/navigation instead of next/router
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
 const FirebaseAuthComponent = dynamic(() => import('./FirebaseAuthComponent'), { ssr: false });
@@ -10,14 +10,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [success, setSuccess] = useState(false);
+  const router = useRouter(); // Move this to the top level
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
 
   const handleSignInSuccess = () => {
-    const router = useRouter();
-    router.push("/app/Dashboard");
+    router.push("/app/Dashboard"); // Use the router instance here
   };
 
   const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,7 +37,13 @@ export default function LoginPage() {
   return (
     <div>
       <h2>Sign In</h2>
-      <FirebaseAuthComponent email={email} password={password} setEmail={setEmail} setPassword={setPassword} onSuccess={handleSignInSuccess} />
+      <FirebaseAuthComponent 
+        email={email} 
+        password={password} 
+        setEmail={setEmail} 
+        setPassword={setPassword} 
+        onSuccess={handleSignInSuccess} 
+      />
     </div>
   );
 }
