@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { auth } from '../../../firebaseApp';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
 const FirebaseAuthComponent = dynamic(() => import('./FirebaseAuthComponent'), { ssr: false });
@@ -24,6 +26,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       // Your sign-in logic here
+      await signInWithEmailAndPassword(auth, email, password);
       setSuccess(true); // Set success only after successful sign-in
     } catch (error) {
       alert("Login failed. Please check your credentials.");
