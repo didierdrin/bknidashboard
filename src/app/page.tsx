@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebaseApp';
-import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { linkWithPopup, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail  } from 'firebase/auth';
 import dynamic from 'next/dynamic';
 
 // Create a client-side only component for router usage
@@ -32,9 +32,31 @@ export default function Home() {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    signInWithPopup(auth, provider);
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        // Fetch the email associated with the Google account
+        const email = error.customData.email;
+        // Fetch sign-in methods for this email
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        if (methods[0] === 'password') {
+          // The user has a password-based account. Ask them to sign in with password first
+          alert('An account already exists with the same email address. Please sign in with your password, then link your Google account.');
+          // You might want to redirect to a password sign-in page here
+        } else {
+          console.error('Unexpected sign-in method:', methods[0]);
+        }
+      } else {
+        console.error('Error signing in:', error);
+      }
+    }
   };
+
+  // const handleGoogleSignIn = () => {
+  //   signInWithPopup(auth, provider);
+  // };
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
