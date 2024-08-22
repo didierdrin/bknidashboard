@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import {
+  collection,
+  query,
+  onSnapshot,
+  getFirestore,
+} from "firebase/firestore";
+import { firestore as db } from "../../firebaseApp";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 type TimeFrame = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
-type MockDataType = {
-  [key in TimeFrame]: {
-    labels: any;
-    data: any;
-  };
-};
-
 const Overview = () => {
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('daily');
-  const [chartData, setChartData] = useState({
+  const [chartData, setChartData] = useState<{
+    labels: string[];
+    datasets: { label: string; data: number[]; backgroundColor: string }[];
+  }>({
     labels: [],
     datasets: [
       {
@@ -27,36 +30,83 @@ const Overview = () => {
   });
 
   useEffect(() => {
-    // Mock data - replace with actual data fetching logic
-    const mockData: MockDataType = {
-      daily: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        data: [12, 19, 3, 5, 2, 3, 9],
-      },
-      weekly: {
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-        data: [65, 59, 80, 81],
-      },
-      monthly: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        data: [65, 59, 80, 81, 56, 55],
-      },
-      yearly: {
-        labels: ['2020', '2021', '2022', '2023', '2024'],
-        data: [300, 450, 400, 500, 550],
-      },
+    const fetchData = async () => {
+      const allOrders: any[] = [];
+
+      // Fetch data from Firestore
+      const ordersQuery = query(collection(db, "orders"));
+      const recentOrdersQuery = query(collection(db, "recent_orders"));
+
+      const unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
+        snapshot.forEach((doc) => allOrders.push(doc.data()));
+        processChartData(allOrders);
+      });
+
+      const unsubscribeRecentOrders = onSnapshot(recentOrdersQuery, (snapshot) => {
+        snapshot.forEach((doc) => allOrders.push(doc.data()));
+        processChartData(allOrders);
+      });
+
+      return () => {
+        unsubscribeOrders();
+        unsubscribeRecentOrders();
+      };
     };
 
-    setChartData({
-      labels: mockData[timeFrame].labels,
-      datasets: [
-        {
-          ...chartData.datasets[0],
-          data: mockData[timeFrame].data,
-        },
-      ],
-    });
-  }, [timeFrame, chartData.datasets]);
+    const processChartData = (allOrders: any[]) => {
+      const dataByTimeFrame = groupOrdersByTimeFrame(allOrders, timeFrame);
+      setChartData({
+        labels: dataByTimeFrame.labels,
+        datasets: [
+          {
+            label: 'Sales',
+            data: dataByTimeFrame.data,
+            backgroundColor: 'rgba(0, 128, 0, 0.6)',
+          },
+        ],
+      });
+    };
+
+    const groupOrdersByTimeFrame = (orders: any[], timeFrame: TimeFrame) => {
+      const salesByPeriod: { [key: string]: number } = {};
+      const labels: string[] = [];
+      const salesData: number[] = [];
+
+      // Example grouping logic based on the time frame selected
+      orders.forEach((order) => {
+        const orderDate = order.order_date?.toDate();
+        if (timeFrame === 'daily') {
+          const day = orderDate?.toLocaleDateString();
+          salesByPeriod[day] = (salesByPeriod[day] || 0) + order.total_amount;
+        } else if (timeFrame === 'weekly') {
+          const week = getWeekNumber(orderDate);
+          salesByPeriod[week] = (salesByPeriod[week] || 0) + order.total_amount;
+        } else if (timeFrame === 'monthly') {
+          const month = orderDate?.getMonth().toString();
+          salesByPeriod[month] = (salesByPeriod[month] || 0) + order.total_amount;
+        } else if (timeFrame === 'yearly') {
+          const year = orderDate?.getFullYear().toString();
+          salesByPeriod[year] = (salesByPeriod[year] || 0) + order.total_amount;
+        }
+      });
+
+      // Prepare labels and data for charting
+      for (const [label, value] of Object.entries(salesByPeriod)) {
+        labels.push(label);
+        salesData.push(value);
+      }
+
+      return { labels, data: salesData };
+    };
+
+    const getWeekNumber = (date: Date) => {
+      const start = new Date(date.getFullYear(), 0, 1);
+      const diff = (date.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+      return `Week ${Math.floor(diff / 7) + 1}`;
+    };
+
+    fetchData();
+  }, [timeFrame]);
 
   const options = {
     responsive: true,
@@ -68,6 +118,9 @@ const Overview = () => {
         display: true,
         text: 'Sales Over Time',
       },
+    },
+    animation: {
+      duration: 1000,
     },
   };
 

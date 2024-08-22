@@ -5,6 +5,10 @@ import {
   query,
   where,
   onSnapshot,
+  doc,
+  updateDoc,
+  deleteDoc,
+  addDoc,
 } from "firebase/firestore";
 import { firestore as db } from "../../firebaseApp";
 
@@ -18,7 +22,7 @@ interface Order {
   order_date: {
     toDate: () => Date;
   };
-  order_status: string;
+  order_status: string[];
 }
 
 const CurrentOrders = () => {
@@ -27,7 +31,7 @@ const CurrentOrders = () => {
   useEffect(() => {
     const q = query(
       collection(db, "orders"),
-      where("order_status", "in", ["Processing", "Shipped"])
+      where("order_status", "array-contains-any", ["Processing", "Shipped"])
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const ordersData: Order[] = snapshot.docs.map((doc) => ({
@@ -38,6 +42,33 @@ const CurrentOrders = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  // Function to handle updating the order status
+  const handleUpdateStatus = async (order: Order, newStatus: string) => {
+    const orderDocRef = doc(db, "orders", order.id);
+
+    try {
+      // Update the order's status to "Delivered"
+      if (newStatus === "Delivered") {
+        // Move the order to the recent_orders collection
+        await addDoc(collection(db, "recent_orders"), {
+          ...order,
+          order_status: ["Delivered"],
+          actual_delivery_date: new Date(),
+        });
+
+        // Delete the order from the orders collection
+        await deleteDoc(orderDocRef);
+      } else {
+        // Update the order status in the orders collection
+        await updateDoc(orderDocRef, {
+          order_status: [...order.order_status, newStatus],
+        });
+      }
+    } catch (error) {
+      console.error("Error updating order status: ", error);
+    }
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -51,6 +82,7 @@ const CurrentOrders = () => {
               <th className="px-4 py-2">Total Amount</th>
               <th className="px-4 py-2">Order Date</th>
               <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -58,11 +90,27 @@ const CurrentOrders = () => {
               <tr key={order.id} className="border-b">
                 <td className="px-4 py-2">{order.order_id}</td>
                 <td className="px-4 py-2">{order.customer_info.name}</td>
-                <td className="px-4 py-2">${order.total_amount}</td>
+                <td className="px-4 py-2">RWF{order.total_amount}</td>
                 <td className="px-4 py-2">
                   {new Date(order.order_date.toDate()).toLocaleDateString()}
                 </td>
-                <td className="px-4 py-2">{order.order_status}</td>
+                <td className="px-4 py-2">
+                  {order.order_status[order.order_status.length - 1]}
+                </td>
+                <td className="px-4 py-2">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
+                    onClick={() => handleUpdateStatus(order, "Delivered")}
+                  >
+                    Mark as Delivered
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded ml-2"
+                    onClick={() => handleUpdateStatus(order, "Cancelled")}
+                  >
+                    Cancel
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
