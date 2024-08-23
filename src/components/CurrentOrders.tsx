@@ -9,6 +9,7 @@ import {
   updateDoc,
   deleteDoc,
   addDoc,
+  getDocs,
 } from "firebase/firestore";
 import { firestore as db } from "../../firebaseApp";
 
@@ -17,6 +18,7 @@ interface Order {
   order_id: string;
   customer_info: {
     name: string;
+    uid: string; // Assuming client_uid is stored here
   };
   total_amount: number;
   order_date: {
@@ -50,11 +52,35 @@ const CurrentOrders = () => {
     try {
       // Update the order's status to "Delivered"
       if (newStatus === "Delivered") {
-        // Move the order to the recent_orders collection
-        await addDoc(collection(db, "recent_orders"), {
+        // Move the order to the global recent_orders collection
+        const addedOrderRef = await addDoc(collection(db, "recent_orders"), {
           ...order,
           order_status: ["Delivered"],
           actual_delivery_date: new Date(),
+        });
+
+        // Fetch the newly added order from the recent_orders collection
+        const recentOrderSnapshot = await getDocs(
+          query(collection(db, "recent_orders"), where("__name__", "==", addedOrderRef.id))
+        );
+
+        recentOrderSnapshot.forEach(async (doc) => {
+          const orderData = doc.data();
+
+          // Assuming client_uid is part of the order data (e.g., orderData.client_uid or orderData.customer_info.uid)
+          const clientUid = orderData.customer_info?.uid;
+          if (clientUid) {
+            // Add the order to the specific user's recent_orders collection
+            const userOrderRef = collection(db, "users", clientUid, "recent_orders");
+
+            await addDoc(userOrderRef, {
+              items: orderData.items || [], // Assuming items are part of the order data
+              totalAmount: orderData.total_amount,
+              orderDate: new Date(orderData.order_date.toDate()), // Convert order_date back to Date
+              status: "Delivered",
+              actual_delivery_date: new Date(),
+            });
+          }
         });
 
         // Delete the order from the orders collection

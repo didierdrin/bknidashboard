@@ -45,8 +45,9 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-800 text-white p-5 transition-all duration-300`}>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="mb-5 w-full text-left hover:text-slate-300">
+      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-800 min-h-screen flex flex-col text-white p-5 transition-all duration-300`}>
+        <div className='flex flex-col flex-grow'>
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className=" mb-5 w-full text-left hover:text-slate-300">
           {sidebarOpen ? '« ' : '»'}
         </button>
         {menuItems.map((item) => (
@@ -60,6 +61,7 @@ export default function Dashboard() {
           </button>
         ))}
         <hr className='py-10 mt-10' />
+        </div>
         <button onClick={handleLogout} className="flex items-center mt-5 text-red-400 hover:text-red-600 ">
           <FaSignOutAlt className="mr-2" />
           {sidebarOpen && <span>Log out</span>}
