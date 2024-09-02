@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  getFirestore,
   collection,
   query,
   where,
@@ -12,9 +11,11 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { firestore as db } from "../../firebaseApp";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 
 interface Order {
   id: string;
+  client_uid: string;
   order_id: string;
   customer_info: {
     name: string;
@@ -25,10 +26,21 @@ interface Order {
     toDate: () => Date;
   };
   order_status: string[];
+  shipping_address?: {
+    unit_number: string;
+    street_address: string;
+    city: string;
+    province: string;
+    postal_code: string;
+    country: string;
+    special_instructions?: string;
+  };
 }
 
 const CurrentOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const q = query(
@@ -38,7 +50,7 @@ const CurrentOrders = () => {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const ordersData: Order[] = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...(doc.data() as Omit<Order, 'id'>),
+        ...(doc.data() as Omit<Order, "id">),
       }));
       setOrders(ordersData);
     });
@@ -50,38 +62,29 @@ const CurrentOrders = () => {
     const orderDocRef = doc(db, "orders", order.id);
 
     try {
-      // Update the order's status to "Delivered"
       if (newStatus === "Delivered") {
-        // Move the order to the global recent_orders collection
+        // Add order to the global recent_orders collection
         const addedOrderRef = await addDoc(collection(db, "recent_orders"), {
           ...order,
           order_status: ["Delivered"],
           actual_delivery_date: new Date(),
         });
 
-        // Fetch the newly added order from the recent_orders collection
-        const recentOrderSnapshot = await getDocs(
-          query(collection(db, "recent_orders"), where("__name__", "==", addedOrderRef.id))
-        );
+        const clientUid = order.client_uid;
 
-        recentOrderSnapshot.forEach(async (doc) => {
-          const orderData = doc.data();
-
-          // Assuming client_uid is part of the order data (e.g., orderData.client_uid or orderData.customer_info.uid)
-          const clientUid = orderData.customer_info?.uid;
           if (clientUid) {
-            // Add the order to the specific user's recent_orders collection
+            // Add the order to the specific user's recent_orders subcollection
             const userOrderRef = collection(db, "users", clientUid, "recent_orders");
 
             await addDoc(userOrderRef, {
-              items: orderData.items || [], // Assuming items are part of the order data
-              totalAmount: orderData.total_amount,
-              orderDate: new Date(orderData.order_date.toDate()), // Convert order_date back to Date
+              items: order || [],
+              totalAmount: order.total_amount,
+              orderDate: new Date(order.order_date.toDate()),
               status: "Delivered",
               actual_delivery_date: new Date(),
+              shipping_address: order.shipping_address || {}, // Ensure shipping address is included
             });
           }
-        });
 
         // Delete the order from the orders collection
         await deleteDoc(orderDocRef);
@@ -94,6 +97,18 @@ const CurrentOrders = () => {
     } catch (error) {
       console.error("Error updating order status: ", error);
     }
+  };
+
+  // Function to handle opening the dialog with shipping address details
+  const handleOpenDialog = (order: Order) => {
+    setSelectedOrder(order);
+    setIsDialogOpen(true);
+  };
+
+  // Function to handle closing the dialog
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedOrder(null);
   };
 
   return (
@@ -113,7 +128,7 @@ const CurrentOrders = () => {
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className="border-b">
+              <tr key={order.id} className="border-b" onClick={() => handleOpenDialog(order)}>
                 <td className="px-4 py-2">{order.order_id}</td>
                 <td className="px-4 py-2">{order.customer_info.name}</td>
                 <td className="px-4 py-2">RWF{order.total_amount}</td>
@@ -126,13 +141,19 @@ const CurrentOrders = () => {
                 <td className="px-4 py-2">
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
-                    onClick={() => handleUpdateStatus(order, "Delivered")}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering the dialog open
+                      handleUpdateStatus(order, "Delivered");
+                    }}
                   >
                     Mark as Delivered
                   </button>
                   <button
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded ml-2"
-                    onClick={() => handleUpdateStatus(order, "Cancelled")}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering the dialog open
+                      handleUpdateStatus(order, "Cancelled");
+                    }}
                   >
                     Cancel
                   </button>
@@ -142,6 +163,34 @@ const CurrentOrders = () => {
           </tbody>
         </table>
       </div>
+
+      {selectedOrder && (
+        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+          <DialogTitle>Shipping Address</DialogTitle>
+          <DialogContent>
+            {selectedOrder.shipping_address ? (
+              <div>
+                <p>Unit Number: {selectedOrder.shipping_address.unit_number}</p>
+                <p>Street Address: {selectedOrder.shipping_address.street_address}</p>
+                <p>City: {selectedOrder.shipping_address.city}</p>
+                <p>Province: {selectedOrder.shipping_address.province}</p>
+                <p>Postal Code: {selectedOrder.shipping_address.postal_code}</p>
+                <p>Country: {selectedOrder.shipping_address.country}</p>
+                {selectedOrder.shipping_address.special_instructions && (
+                  <p>Special Instructions: {selectedOrder.shipping_address.special_instructions}</p>
+                )}
+              </div>
+            ) : (
+              <p>No shipping address available.</p>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </div>
   );
 };

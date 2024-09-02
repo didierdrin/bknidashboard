@@ -14,21 +14,30 @@ interface Order {
     name: string;
     email: string;
     phone: string;
-    billing_address: string;
   };
   total_amount: number;
   order_date: {
     toDate: () => Date;
   };
   order_status: string[];
-  shipping_address: string;
+  shipping_address: {
+    unit_number: string;
+    street_address: string;
+    city: string;
+    province: string;
+    postal_code: string;
+    country: string;
+    special_instructions?: string;
+  };
   items: Array<{
     name: string;
     price_per_unit: number;
     quantity: number;
   }>;
   payment_method: string;
-  tracking_number: number;
+  tracking_number: {
+    toDate: () => Date;
+  };
   actual_delivery_date: {
     toDate: () => Date;
   } | null;
@@ -42,7 +51,7 @@ const RecentOrders = () => {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const ordersData: Order[] = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...(doc.data() as Omit<Order, 'id'>),
+        ...(doc.data() as Omit<Order, "id">),
       }));
       setOrders(ordersData);
     });
@@ -65,6 +74,7 @@ const RecentOrders = () => {
               <th className="px-4 py-2">Payment Method</th>
               <th className="px-4 py-2">Tracking Number</th>
               <th className="px-4 py-2">Delivery Date</th>
+              <th className="px-4 py-2">Shipping Address</th>
             </tr>
           </thead>
           <tbody>
@@ -86,16 +96,26 @@ const RecentOrders = () => {
                 <td className="px-4 py-2">
                   {order.items.map((item, index) => (
                     <div key={index}>
-                      {item.name} - {item.quantity} x ${item.price_per_unit}
+                      {item.name} - {item.quantity} x RWF{item.price_per_unit}
                     </div>
                   ))}
                 </td>
                 <td className="px-4 py-2">{order.payment_method}</td>
-                <td className="px-4 py-2">{order.tracking_number}</td>
+                <td className="px-4 py-2">
+                  {new Date(order.tracking_number.toDate()).toLocaleDateString()}
+                </td>
                 <td className="px-4 py-2">
                   {order.actual_delivery_date
                     ? new Date(order.actual_delivery_date.toDate()).toLocaleDateString()
                     : "Not Delivered Yet"}
+                </td>
+                <td className="px-4 py-2">
+                  {order.shipping_address.unit_number}, {order.shipping_address.street_address},<br />
+                  {order.shipping_address.city}, {order.shipping_address.province},<br />
+                  {order.shipping_address.postal_code}, {order.shipping_address.country}<br />
+                  {order.shipping_address.special_instructions && (
+                    <em>Instructions: {order.shipping_address.special_instructions}</em>
+                  )}
                 </td>
               </tr>
             ))}
