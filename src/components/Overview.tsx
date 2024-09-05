@@ -5,10 +5,11 @@ import {
   collection,
   query,
   onSnapshot,
+  where,
   getFirestore,
 } from "firebase/firestore";
 import { firestore as db } from "../../firebaseApp";
-
+import { getAuth } from "firebase/auth";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 type TimeFrame = 'daily' | 'weekly' | 'monthly' | 'yearly';
@@ -28,14 +29,20 @@ const Overview = () => {
       },
     ],
   });
-
+  const auth = getAuth();
   useEffect(() => {
     const fetchData = async () => {
       const allOrders: any[] = [];
+      const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      console.error("No user logged in");
+      return;
+    }
 
       // Fetch data from Firestore
-      const ordersQuery = query(collection(db, "orders"));
-      const recentOrdersQuery = query(collection(db, "recent_orders"));
+      const ordersQuery = query(collection(db, "orders"), where("brand_uid", "==", currentUser.uid));
+      const recentOrdersQuery = query(collection(db, "recent_orders"), where("brand_uid", "==", currentUser.uid));
 
       const unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
         snapshot.forEach((doc) => allOrders.push(doc.data()));

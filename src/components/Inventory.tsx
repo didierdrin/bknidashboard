@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import {
   getFirestore,
   collection,
@@ -11,6 +10,7 @@ import {
   deleteDoc,
   doc,
   GeoPoint,
+  where,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firestore as db } from "../../firebaseApp";
@@ -95,7 +95,21 @@ const Inventory = () => {
   const auth = getAuth();
 
   useEffect(() => {
-    const q = query(collection(db, "products"));
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      console.error("No user logged in");
+      return;
+    }
+
+    const q = query(
+      collection(db, "products"),
+      where("brand_uid", "==", currentUser.uid)
+    );
+    // const q = query(
+    //   collection(db, "products"),
+      
+    // );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setProducts(
         snapshot.docs.map((doc) => ({
@@ -197,10 +211,10 @@ const Inventory = () => {
         ...editingProduct.data,
         last_updated: new Date(),
       };
-      await updateDoc(doc(db, 'products', editingProduct.id), updatedData);
+      await updateDoc(doc(db, "products", editingProduct.id), updatedData);
       setEditingProduct(null);
     } catch (error) {
-      console.error('Error updating product: ', error);
+      console.error("Error updating product: ", error);
     }
   };
 
@@ -233,7 +247,10 @@ const Inventory = () => {
             placeholder="Price"
             value={newProduct.price}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, price: safeParseFloat(e.target.value) })
+              setNewProduct({
+                ...newProduct,
+                price: safeParseFloat(e.target.value),
+              })
             }
             className="p-2 border rounded"
           />
@@ -272,7 +289,10 @@ const Inventory = () => {
             placeholder="Quantity"
             value={newProduct.quantity}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, quantity: parseInt(e.target.value) })
+              setNewProduct({
+                ...newProduct,
+                quantity: parseInt(e.target.value),
+              })
             }
             className="p-2 border rounded"
           />
@@ -308,7 +328,10 @@ const Inventory = () => {
             placeholder="Cost Price"
             value={newProduct.cost_price}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, cost_price: parseFloat(e.target.value) })
+              setNewProduct({
+                ...newProduct,
+                cost_price: parseFloat(e.target.value),
+              })
             }
             className="p-2 border rounded"
           />
@@ -317,7 +340,10 @@ const Inventory = () => {
             placeholder="Discount Price"
             value={newProduct.discount_price}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, discount_price: parseFloat(e.target.value) })
+              setNewProduct({
+                ...newProduct,
+                discount_price: parseFloat(e.target.value),
+              })
             }
             className="p-2 border rounded"
           />
@@ -347,7 +373,10 @@ const Inventory = () => {
             placeholder="Shipping Weight"
             value={newProduct.shipping_weight}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, shipping_weight: parseFloat(e.target.value) })
+              setNewProduct({
+                ...newProduct,
+                shipping_weight: parseFloat(e.target.value),
+              })
             }
             className="p-2 border rounded"
           />
@@ -407,7 +436,10 @@ const Inventory = () => {
             placeholder="Product ID"
             value={newProduct.product_id}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, product_id: parseInt(e.target.value) })
+              setNewProduct({
+                ...newProduct,
+                product_id: parseInt(e.target.value),
+              })
             }
             className="p-2 border rounded"
           />
@@ -434,7 +466,10 @@ const Inventory = () => {
             placeholder="Weight"
             value={newProduct.weight}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, weight: parseFloat(e.target.value) })
+              setNewProduct({
+                ...newProduct,
+                weight: parseFloat(e.target.value),
+              })
             }
             className="p-2 border rounded"
           />
@@ -452,21 +487,26 @@ const Inventory = () => {
         </button>
       </form>
 
-     
-	<h3 className="mb-6 text-xl font-medium">Inventory List</h3>
+      <h3 className="mb-6 text-xl font-medium">Inventory List</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map(({ id, data }) => (
           <div key={id} className="border p-4 rounded">
-            <Image src={data.img_url} priority alt="Loading..." width={200} height={200} />
+            <Image
+              src={data.img_url}
+              priority
+              alt="Loading..."
+              width={200}
+              height={200}
+            />
             <h4 className="font-bold mt-2">{data.name}</h4>
-            <p className="font-normalbold mb-2" >RWF {data.price}</p>
+            <p className="font-normalbold mb-2">RWF {data.price}</p>
             <hr className="mb-2" />
             <p>Category: {data?.category?.join(", ")}</p>
             <p>Brand: {data.brand}</p>
             <p>Quantity: {data.quantity}</p>
             <p>Color: {data.color}</p>
             <p>Size: {data.size}</p>
-            <p>SKU: {data.sku}</p> 
+            <p>SKU: {data.sku}</p>
             <hr className="mt-2" />
             <div className="flex space-x-4  mt-2">
               <button
@@ -475,7 +515,7 @@ const Inventory = () => {
               >
                 Edit
               </button>
-              
+
               <button
                 onClick={() => handleDeleteProduct(id)}
                 className="text-red-500 hover:text-red-700 hover:translate-x-1"
@@ -514,7 +554,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, price: parseFloat(e.target.value) },
+                    data: {
+                      ...editingProduct.data,
+                      price: parseFloat(e.target.value),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -525,7 +568,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, description: e.target.value },
+                    data: {
+                      ...editingProduct.data,
+                      description: e.target.value,
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -536,7 +582,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, category: e.target.value.split(",") },
+                    data: {
+                      ...editingProduct.data,
+                      category: e.target.value.split(","),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -558,7 +607,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, quantity: parseInt(e.target.value) },
+                    data: {
+                      ...editingProduct.data,
+                      quantity: parseInt(e.target.value),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -602,7 +654,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, cost_price: parseFloat(e.target.value) },
+                    data: {
+                      ...editingProduct.data,
+                      cost_price: parseFloat(e.target.value),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -613,7 +668,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, discount_price: parseFloat(e.target.value) },
+                    data: {
+                      ...editingProduct.data,
+                      discount_price: parseFloat(e.target.value),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -635,7 +693,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, care_instructions: e.target.value },
+                    data: {
+                      ...editingProduct.data,
+                      care_instructions: e.target.value,
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -646,7 +707,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, shipping_weight: parseFloat(e.target.value) },
+                    data: {
+                      ...editingProduct.data,
+                      shipping_weight: parseFloat(e.target.value),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -657,7 +721,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, available_colors: e.target.value.split(",") },
+                    data: {
+                      ...editingProduct.data,
+                      available_colors: e.target.value.split(","),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -668,7 +735,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, available_sizes: e.target.value.split(",") },
+                    data: {
+                      ...editingProduct.data,
+                      available_sizes: e.target.value.split(","),
+                    },
                   })
                 }
                 className="block w-full p-2 border rounded"
@@ -679,7 +749,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, tags: e.target.value.split(",") },
+                    data: {
+                      ...editingProduct.data,
+                      tags: e.target.value.split(","),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -712,7 +785,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, product_id: parseInt(e.target.value) },
+                    data: {
+                      ...editingProduct.data,
+                      product_id: parseInt(e.target.value),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -723,7 +799,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, supplier_info: e.target.value },
+                    data: {
+                      ...editingProduct.data,
+                      supplier_info: e.target.value,
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -734,7 +813,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, tax_category: e.target.value },
+                    data: {
+                      ...editingProduct.data,
+                      tax_category: e.target.value,
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"
@@ -745,7 +827,10 @@ const Inventory = () => {
                 onChange={(e) =>
                   setEditingProduct({
                     ...editingProduct,
-                    data: { ...editingProduct.data, weight: parseFloat(e.target.value) },
+                    data: {
+                      ...editingProduct.data,
+                      weight: parseFloat(e.target.value),
+                    },
                   })
                 }
                 className="block w-full p-2 mb-2 border rounded"

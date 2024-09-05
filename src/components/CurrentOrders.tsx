@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { firestore as db } from "../../firebaseApp";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import { getAuth } from "firebase/auth";
 
 interface Order {
   id: string;
@@ -41,11 +42,19 @@ const CurrentOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+  const auth = getAuth();
   useEffect(() => {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      console.error("No user logged in");
+      return;
+    }
+
     const q = query(
       collection(db, "orders"),
-      where("order_status", "array-contains-any", ["Processing", "Shipped"])
+      where("order_status", "array-contains-any", ["Processing", "Shipped"]),
+      where("brand_uid", "==", currentUser.uid)
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const ordersData: Order[] = snapshot.docs.map((doc) => ({

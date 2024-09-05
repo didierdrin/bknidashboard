@@ -3,10 +3,11 @@ import {
   getFirestore,
   collection,
   query,
+  where,
   onSnapshot,
 } from "firebase/firestore";
 import { firestore as db } from "../../firebaseApp";
-
+import { getAuth } from "firebase/auth";
 interface Order {
   id: string;
   order_id: number;
@@ -45,9 +46,15 @@ interface Order {
 
 const RecentOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-
+  const auth = getAuth();
   useEffect(() => {
-    const q = query(collection(db, "recent_orders"));
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      console.error("No user logged in");
+      return;
+    }
+    const q = query(collection(db, "recent_orders"),where("brand_uid", "==", currentUser.uid));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const ordersData: Order[] = snapshot.docs.map((doc) => ({
         id: doc.id,
