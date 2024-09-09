@@ -226,6 +226,8 @@ const Inventory = () => {
     }
   };
 
+  
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4">Inventory Management</h3>
@@ -245,7 +247,8 @@ const Inventory = () => {
           <input
             type="number"
             placeholder="Price"
-            value={newProduct.price}
+            // value={newProduct.price}
+            value={newProduct.price === 0 ? '' : newProduct.price}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
@@ -287,7 +290,8 @@ const Inventory = () => {
           <input
             type="number"
             placeholder="Quantity"
-            value={newProduct.quantity}
+            // value={newProduct.quantity}
+            value={newProduct.quantity === 0 ? '' : newProduct.quantity}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
@@ -326,7 +330,8 @@ const Inventory = () => {
           <input
             type="number"
             placeholder="Cost Price"
-            value={newProduct.cost_price}
+            // value={newProduct.cost_price}
+            value={newProduct.cost_price === 0 ? '' : newProduct.cost_price}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
@@ -338,7 +343,8 @@ const Inventory = () => {
           <input
             type="number"
             placeholder="Discount Price"
-            value={newProduct.discount_price}
+            // value={newProduct.discount_price}
+            value={newProduct.discount_price === 0 ? '' : newProduct.discount_price}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
@@ -371,7 +377,8 @@ const Inventory = () => {
           <input
             type="number"
             placeholder="Shipping Weight"
-            value={newProduct.shipping_weight}
+            // value={newProduct.shipping_weight}
+            value={newProduct.shipping_weight === 0 ? '' : newProduct.shipping_weight}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
@@ -434,7 +441,8 @@ const Inventory = () => {
           <input
             type="number"
             placeholder="Product ID"
-            value={newProduct.product_id}
+            // value={newProduct.product_id}
+            value={newProduct.product_id === 0 ? '' : newProduct.product_id}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
@@ -464,7 +472,8 @@ const Inventory = () => {
           <input
             type="number"
             placeholder="Weight"
-            value={newProduct.weight}
+            // value={newProduct.weight}
+            value={newProduct.weight === 0 ? '' : newProduct.weight}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
