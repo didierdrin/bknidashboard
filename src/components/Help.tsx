@@ -23,8 +23,8 @@ const Help = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-4">Help & Suggestions</h3>
+    <div className="dashboard-card">
+      <h3 className="text-lg sm:text-xl font-semibold mb-4">Help & Suggestions</h3>
       <p className="mb-4">
         We value your feedback! If you have any suggestions or need help, please feel free to leave a message below.
       </p>
@@ -35,7 +35,7 @@ const Help = () => {
             id="suggestion"
             value={suggestion}
             onChange={(e) => setSuggestion(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
             rows={4}
             required
           />

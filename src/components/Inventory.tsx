@@ -225,12 +225,12 @@ const Inventory = () => {
   
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-4">Inventory Management</h3>
+    <div className="dashboard-card">
+      <h3 className="text-lg sm:text-xl font-semibold mb-4">Inventory Management</h3>
 
       <form onSubmit={handleAddProduct} className="mb-8">
-        <h4 className="text-lg font-medium mb-2">Add New Product</h4>
-        <div className="grid grid-cols-2 gap-4">
+        <h4 className="text-base sm:text-lg font-medium mb-2">Add New Product</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <input
             type="text"
             placeholder="Product Name"
@@ -238,7 +238,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, name: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="number"
@@ -251,7 +251,7 @@ const Inventory = () => {
                 price: safeParseFloat(e.target.value),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -260,7 +260,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, description: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -272,7 +272,7 @@ const Inventory = () => {
                 category: e.target.value.split(","),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -281,7 +281,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, brand: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="number"
@@ -294,7 +294,7 @@ const Inventory = () => {
                 quantity: parseInt(e.target.value),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -303,7 +303,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, color: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -312,7 +312,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, size: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -321,7 +321,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, sku: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="number"
@@ -334,7 +334,7 @@ const Inventory = () => {
                 cost_price: parseFloat(e.target.value),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="number"
@@ -347,7 +347,7 @@ const Inventory = () => {
                 discount_price: parseFloat(e.target.value),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -356,7 +356,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, material: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -368,7 +368,7 @@ const Inventory = () => {
                 care_instructions: e.target.value,
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="number"
@@ -381,7 +381,7 @@ const Inventory = () => {
                 shipping_weight: parseFloat(e.target.value),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -393,7 +393,7 @@ const Inventory = () => {
                 available_colors: e.target.value.split(","),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -405,7 +405,7 @@ const Inventory = () => {
                 available_sizes: e.target.value.split(","),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -414,7 +414,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, tags: e.target.value.split(",") })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -423,7 +423,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, bar_code: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -432,7 +432,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, lead_time: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="number"
@@ -445,7 +445,7 @@ const Inventory = () => {
                 product_id: parseInt(e.target.value),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -454,7 +454,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, supplier_info: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="text"
@@ -463,7 +463,7 @@ const Inventory = () => {
             onChange={(e) =>
               setNewProduct({ ...newProduct, tax_category: e.target.value })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="number"
@@ -476,12 +476,12 @@ const Inventory = () => {
                 weight: parseFloat(e.target.value),
               })
             }
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
           <input
             type="file"
             onChange={handleImageChange}
-            className="p-2 border rounded"
+            className="dashboard-input"
           />
         </div>
         <button
@@ -495,7 +495,7 @@ const Inventory = () => {
       <h3 className="mb-6 text-xl font-medium">Inventory List</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map(({ id, data }) => (
-          <div key={id} className="border p-4 rounded">
+          <div key={id} className="rounded border border-gray-200 p-4 dark:border-gray-600">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={
@@ -505,7 +505,7 @@ const Inventory = () => {
               alt={data.name || "Product"}
               width={200}
               height={200}
-              className="h-[200px] w-[200px] object-cover rounded"
+              className="h-40 w-full max-w-[200px] object-cover rounded sm:h-[200px] sm:w-[200px]"
             />
             <h4 className="font-bold mt-2">{data.name}</h4>
             <p className="font-normalbold mb-2">RWF {data.price}</p>
@@ -538,11 +538,11 @@ const Inventory = () => {
 
       {editingProduct && (
         <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-gray-600/50 p-4 sm:p-6"
           id="my-modal"
         >
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">
+          <div className="relative my-4 w-full max-w-lg rounded-md border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-600 dark:bg-gray-800 sm:p-5">
+            <h3 className="mb-2 text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
               Edit Product
             </h3>
             <form onSubmit={handleUpdateProduct}>
@@ -555,7 +555,7 @@ const Inventory = () => {
                     data: { ...editingProduct.data, name: e.target.value },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="number"
@@ -569,7 +569,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -583,7 +583,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -597,7 +597,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -608,7 +608,7 @@ const Inventory = () => {
                     data: { ...editingProduct.data, brand: e.target.value },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="number"
@@ -622,7 +622,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -633,7 +633,7 @@ const Inventory = () => {
                     data: { ...editingProduct.data, color: e.target.value },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -644,7 +644,7 @@ const Inventory = () => {
                     data: { ...editingProduct.data, size: e.target.value },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -655,7 +655,7 @@ const Inventory = () => {
                     data: { ...editingProduct.data, sku: e.target.value },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="number"
@@ -669,7 +669,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="number"
@@ -683,7 +683,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -694,7 +694,7 @@ const Inventory = () => {
                     data: { ...editingProduct.data, material: e.target.value },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -708,7 +708,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="number"
@@ -722,7 +722,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -736,7 +736,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -750,7 +750,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 border rounded"
+                className="dashboard-input block w-full"
               />
               <input
                 type="text"
@@ -764,7 +764,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -775,7 +775,7 @@ const Inventory = () => {
                     data: { ...editingProduct.data, bar_code: e.target.value },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -786,7 +786,7 @@ const Inventory = () => {
                     data: { ...editingProduct.data, lead_time: e.target.value },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="number"
@@ -800,7 +800,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -814,7 +814,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="text"
@@ -828,7 +828,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <input
                 type="number"
@@ -842,7 +842,7 @@ const Inventory = () => {
                     },
                   })
                 }
-                className="block w-full p-2 mb-2 border rounded"
+                className="dashboard-input mb-2 block w-full"
               />
               <button
                 type="submit"
@@ -852,7 +852,7 @@ const Inventory = () => {
               </button>
               <button
                 onClick={() => setEditingProduct(null)}
-                className="bg-gray-300 px-4 py-2 rounded"
+                className="rounded bg-gray-300 px-4 py-2 dark:bg-gray-600 dark:text-gray-100"
               >
                 Cancel
               </button>

@@ -121,23 +121,77 @@ const CurrentOrders = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-4">Current Orders</h3>
-      <div className="overflow-x-auto">
+    <div className="dashboard-card">
+      <h3 className="text-lg sm:text-xl font-semibold mb-4">Current Orders</h3>
+
+      {/* Mobile card list */}
+      <div className="space-y-4 md:hidden">
+        {orders.length === 0 ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400">No current orders.</p>
+        ) : (
+          orders.map((order) => (
+            <div
+              key={order.id}
+              className="rounded-lg border border-gray-200 p-4 shadow-sm dark:border-gray-600 dark:bg-gray-700/40"
+              onClick={() => handleOpenDialog(order)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && handleOpenDialog(order)}
+            >
+              <div className="flex justify-between gap-2 mb-2">
+                <span className="font-semibold text-sm">#{order.order_id}</span>
+                <span className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-600">
+                  {order.order_status[order.order_status.length - 1]}
+                </span>
+              </div>
+              <p className="text-sm text-gray-700 dark:text-gray-200">{order.customer_info.name}</p>
+              <p className="text-sm font-medium mt-1">RWF {order.total_amount}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {new Date(order.order_date.toDate()).toLocaleDateString()}
+              </p>
+              <div className="flex flex-col gap-2 mt-3 sm:flex-row">
+                <button
+                  type="button"
+                  className="flex-1 bg-blue-500 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUpdateStatus(order, "Delivered");
+                  }}
+                >
+                  Mark as Delivered
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 bg-red-500 hover:bg-red-700 text-white text-sm font-medium py-2 px-3 rounded"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUpdateStatus(order, "Cancelled");
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full table-auto">
           <thead>
-            <tr className="bg-gray-200">
-              <th className="px-4 py-2">Order ID</th>
-              <th className="px-4 py-2">Customer</th>
-              <th className="px-4 py-2">Total Amount</th>
-              <th className="px-4 py-2">Order Date</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Actions</th>
+            <tr className="bg-gray-200 dark:bg-gray-700">
+              <th className="px-4 py-2 text-left">Order ID</th>
+              <th className="px-4 py-2 text-left">Customer</th>
+              <th className="px-4 py-2 text-left">Total Amount</th>
+              <th className="px-4 py-2 text-left">Order Date</th>
+              <th className="px-4 py-2 text-left">Status</th>
+              <th className="px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className="border-b" onClick={() => handleOpenDialog(order)}>
+              <tr key={order.id} className="cursor-pointer border-b border-gray-200 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700/50" onClick={() => handleOpenDialog(order)}>
                 <td className="px-4 py-2">{order.order_id}</td>
                 <td className="px-4 py-2">{order.customer_info.name}</td>
                 <td className="px-4 py-2">RWF{order.total_amount}</td>
@@ -147,20 +201,22 @@ const CurrentOrders = () => {
                 <td className="px-4 py-2">
                   {order.order_status[order.order_status.length - 1]}
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 whitespace-nowrap">
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded"
+                    type="button"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering the dialog open
+                      e.stopPropagation();
                       handleUpdateStatus(order, "Delivered");
                     }}
                   >
-                    Mark as Delivered
+                    Delivered
                   </button>
                   <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded ml-2"
+                    type="button"
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded ml-2 text-sm"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering the dialog open
+                      e.stopPropagation();
                       handleUpdateStatus(order, "Cancelled");
                     }}
                   >
@@ -174,7 +230,13 @@ const CurrentOrders = () => {
       </div>
 
       {selectedOrder && (
-        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+        <Dialog
+          open={isDialogOpen}
+          onClose={handleCloseDialog}
+          fullWidth
+          maxWidth="sm"
+          PaperProps={{ sx: { m: { xs: 1, sm: 2 } } }}
+        >
           <DialogTitle>Shipping Address</DialogTitle>
           <DialogContent>
             {selectedOrder.shipping_address ? (

@@ -1,4 +1,7 @@
+'use client';
+
 import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import {
@@ -15,6 +18,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 type TimeFrame = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 const Overview = () => {
+  const { resolvedTheme } = useTheme();
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('daily');
   const [chartData, setChartData] = useState<{
     labels: string[];
@@ -115,15 +119,31 @@ const Overview = () => {
     fetchData();
   }, [timeFrame]);
 
+  const isDark = resolvedTheme === 'dark';
+  const chartTextColor = isDark ? '#e5e7eb' : '#374151';
+  const chartGridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+
   const options = {
     responsive: true,
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: { color: chartTextColor },
       },
       title: {
         display: true,
         text: 'Sales Over Time',
+        color: chartTextColor,
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: chartTextColor },
+        grid: { color: chartGridColor },
+      },
+      y: {
+        ticks: { color: chartTextColor },
+        grid: { color: chartGridColor },
       },
     },
     animation: {
@@ -132,15 +152,15 @@ const Overview = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-4">Sales Overview</h3>
-      <div className="mb-4">
-        <label htmlFor="timeFrame" className="mr-2">Select time frame:</label>
+    <div className="dashboard-card">
+      <h3 className="mb-4 text-lg font-semibold sm:text-xl">Sales Overview</h3>
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <label htmlFor="timeFrame" className="text-sm text-gray-700 dark:text-gray-300 sm:text-base">Select time frame:</label>
         <select
           id="timeFrame"
           value={timeFrame}
           onChange={(e) => setTimeFrame(e.target.value as TimeFrame)}
-          className="border rounded p-1"
+          className="dashboard-input w-full text-sm sm:w-auto"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -148,7 +168,9 @@ const Overview = () => {
           <option value="yearly">Yearly</option>
         </select>
       </div>
-      <Bar options={options} data={chartData} />
+      <div className="relative h-56 w-full min-w-0 sm:h-72 md:h-96">
+        <Bar options={options} data={chartData} />
+      </div>
     </div>
   );
 };

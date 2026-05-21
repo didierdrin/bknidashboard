@@ -1,65 +1,81 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 
 type SettingsType = {
   notifications: boolean;
-  darkMode: boolean;
   language: string;
   currency: string;
 };
 
 const Settings = () => {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [settings, setSettings] = useState<SettingsType>({
     notifications: true,
-    darkMode: false,
     language: 'en',
-    currency: 'USD'
+    currency: 'USD',
   });
 
-  const handleToggle = (setting: keyof Pick<SettingsType, 'notifications' | 'darkMode'>) => {
-    setSettings(prevSettings => ({
+  useEffect(() => setMounted(true), []);
+
+  const isDark = mounted && resolvedTheme === 'dark';
+
+  const handleToggle = (setting: keyof Pick<SettingsType, 'notifications'>) => {
+    setSettings((prevSettings) => ({
       ...prevSettings,
-      [setting]: !prevSettings[setting]
+      [setting]: !prevSettings[setting],
     }));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setSettings(prevSettings => ({
+    setSettings((prevSettings) => ({
       ...prevSettings,
-      [name]: value
+      [name]: value,
     }));
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-4">Settings</h3>
+    <div className="dashboard-card">
+      <h3 className="mb-4 text-lg font-semibold sm:text-xl">Settings</h3>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <span>Notifications</span>
           <button
+            type="button"
             onClick={() => handleToggle('notifications')}
-            className={`w-12 h-6 rounded-full p-1 ${settings.notifications ? 'bg-blue-500' : 'bg-gray-300'}`}
+            className={`h-6 w-12 rounded-full p-1 ${settings.notifications ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`}
           >
-            <div className={`w-4 h-4 rounded-full bg-white transform duration-300 ease-in-out ${settings.notifications ? 'translate-x-6' : ''}`}></div>
+            <div
+              className={`h-4 w-4 transform rounded-full bg-white duration-300 ease-in-out ${settings.notifications ? 'translate-x-6' : ''}`}
+            />
           </button>
         </div>
         <div className="flex items-center justify-between">
           <span>Dark Mode</span>
           <button
-            onClick={() => handleToggle('darkMode')}
-            className={`w-12 h-6 rounded-full p-1 ${settings.darkMode ? 'bg-blue-500' : 'bg-gray-300'}`}
+            type="button"
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
+            className={`h-6 w-12 rounded-full p-1 ${isDark ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            <div className={`w-4 h-4 rounded-full bg-white transform duration-300 ease-in-out ${settings.darkMode ? 'translate-x-6' : ''}`}></div>
+            <div
+              className={`h-4 w-4 transform rounded-full bg-white duration-300 ease-in-out ${isDark ? 'translate-x-6' : ''}`}
+            />
           </button>
         </div>
         <div>
-          <label htmlFor="language" className="block mb-1">Language</label>
+          <label htmlFor="language" className="mb-1 block">
+            Language
+          </label>
           <select
             id="language"
             name="language"
             value={settings.language}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
           >
             <option value="en">English</option>
             <option value="es">Español</option>
@@ -67,13 +83,15 @@ const Settings = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="currency" className="block mb-1">Currency</label>
+          <label htmlFor="currency" className="mb-1 block">
+            Currency
+          </label>
           <select
             id="currency"
             name="currency"
             value={settings.currency}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
           >
             <option value="USD">USD</option>
             <option value="EUR">EUR</option>

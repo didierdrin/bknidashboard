@@ -59,7 +59,7 @@ export default function Home() {
   // };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">Loading...</div>;
   }
 
   if (user) {
@@ -67,38 +67,38 @@ export default function Home() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-lg">
-        <h3 className="text-2xl font-bold text-center">{isSignUp ? 'Sign Up' : 'Login'} to your account</h3>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-6 dark:bg-gray-900">
+      <div className="w-full max-w-md rounded-lg bg-white px-4 py-6 text-left shadow-lg dark:bg-gray-800 sm:px-8">
+        <h3 className="text-center text-xl font-bold text-gray-900 dark:text-gray-100 sm:text-2xl">{isSignUp ? 'Sign Up' : 'Login'} to your account</h3>
         <form onSubmit={handleEmailSignIn}>
           <div className="mt-4">
             <div>
-              <label className="block" htmlFor="email">Email</label>
+              <label className="block text-gray-700 dark:text-gray-300" htmlFor="email">Email</label>
               <input
                 type="text"
                 placeholder="Email"
-                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                className="dashboard-input mt-2 w-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-600"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="mt-4">
-              <label className="block">Password</label>
+              <label className="block text-gray-700 dark:text-gray-300">Password</label>
               <input
                 type="password"
                 placeholder="Password"
-                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                className="dashboard-input mt-2 w-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-600"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-            <div className="flex items-baseline justify-between">
-              <button className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900" type="submit">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
+              <button className="w-full sm:w-auto px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900" type="submit">
                 {isSignUp ? 'Sign Up' : 'Login'}
               </button>
-              <a href="#" className="text-sm text-blue-600 hover:underline" onClick={() => setIsSignUp(!isSignUp)}>
+              <a href="#" className="text-sm text-center sm:text-left text-blue-600 hover:underline" onClick={(e) => { e.preventDefault(); setIsSignUp(!isSignUp); }}>
                 {isSignUp ? 'Already have an account? Login' : 'Create account'}
               </a>
             </div>

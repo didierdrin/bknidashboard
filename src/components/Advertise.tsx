@@ -42,8 +42,8 @@ const Advertise = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-4">Create Advertisement</h3>
+    <div className="dashboard-card">
+      <h3 className="text-lg sm:text-xl font-semibold mb-4">Create Advertisement</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="title" className="block mb-1">Title</label>
@@ -53,7 +53,7 @@ const Advertise = () => {
             name="title"
             value={adData.title}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
             required
           />
         </div>
@@ -64,7 +64,7 @@ const Advertise = () => {
             name="description"
             value={adData.description}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
             required
           />
         </div>
@@ -76,7 +76,7 @@ const Advertise = () => {
             name="image_url"
             value={adData.image_url}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
             required
           />
         </div>
@@ -88,7 +88,7 @@ const Advertise = () => {
             name="target_audience"
             value={adData.target_audience}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
             required
           />
         </div>
@@ -100,7 +100,7 @@ const Advertise = () => {
             name="start_date"
             value={adData.start_date}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
             required
           />
         </div>
@@ -112,7 +112,7 @@ const Advertise = () => {
             name="end_date"
             value={adData.end_date}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
             required
           />
         </div>
@@ -124,7 +124,7 @@ const Advertise = () => {
             name="budget"
             value={adData.budget}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded"
+            className="dashboard-input w-full"
             required
           />
         </div>
