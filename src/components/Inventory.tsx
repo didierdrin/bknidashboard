@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   getFirestore,
   collection,
@@ -12,9 +11,9 @@ import {
   GeoPoint,
   where,
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firestore as db } from "../../firebaseApp";
 import { getAuth } from "firebase/auth";
+import { fileToDataUrl, resolveProductImageSrc } from "../utils/productImage";
 
 interface ProductData {
   name: string;
@@ -91,7 +90,6 @@ const Inventory = () => {
   });
   const [image, setImage] = useState<File | null>(null);
 
-  const storage = getStorage();
   const auth = getAuth();
 
   useEffect(() => {
@@ -143,9 +141,7 @@ const Inventory = () => {
     try {
       let img_url = "";
       if (image) {
-        const storageRef = ref(storage, `product_images/${image.name}`);
-        await uploadBytes(storageRef, image);
-        img_url = await getDownloadURL(storageRef);
+        img_url = await fileToDataUrl(image);
       }
 
       const currentUser = auth.currentUser;
@@ -500,12 +496,16 @@ const Inventory = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map(({ id, data }) => (
           <div key={id} className="border p-4 rounded">
-            <Image
-              src={data.img_url}
-              priority
-              alt="Loading..."
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={
+                resolveProductImageSrc(data.img_url) ||
+                "https://placehold.co/200x200/png?text=No+Image"
+              }
+              alt={data.name || "Product"}
               width={200}
               height={200}
+              className="h-[200px] w-[200px] object-cover rounded"
             />
             <h4 className="font-bold mt-2">{data.name}</h4>
             <p className="font-normalbold mb-2">RWF {data.price}</p>
