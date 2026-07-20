@@ -53,7 +53,7 @@ export default function Dashboard() {
     { name: 'inventory', icon: FaBoxes, component: Inventory },
     { name: 'Current orders', icon: FaShoppingCart, component: CurrentOrders },
     { name: 'recent orders', icon: FaHistory, component: RecentOrders },
-    { name: 'advertise', icon: FaAd, component: Advertise },
+    { name: 'banners', icon: FaAd, component: Advertise },
     { name: 'help', icon: FaQuestionCircle, component: Help },
     { name: 'settings', icon: FaCog, component: Settings },
   ];

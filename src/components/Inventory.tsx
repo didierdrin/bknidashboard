@@ -338,16 +338,17 @@ const Inventory = () => {
           />
           <input
             type="number"
-            placeholder="Discount Price"
+            placeholder="Sale price (0 = no discount)"
             // value={newProduct.discount_price}
             value={newProduct.discount_price === 0 ? '' : newProduct.discount_price}
             onChange={(e) =>
               setNewProduct({
                 ...newProduct,
-                discount_price: parseFloat(e.target.value),
+                discount_price: parseFloat(e.target.value) || 0,
               })
             }
             className="dashboard-input"
+            title="Set a sale price lower than Price to discount this product"
           />
           <input
             type="text"
@@ -671,6 +672,7 @@ const Inventory = () => {
                 }
                 className="dashboard-input mb-2 block w-full"
               />
+              <label className="mb-1 block text-xs text-gray-500">Sale price (0 = no discount)</label>
               <input
                 type="number"
                 value={editingProduct.data.discount_price}
@@ -679,7 +681,7 @@ const Inventory = () => {
                     ...editingProduct,
                     data: {
                       ...editingProduct.data,
-                      discount_price: parseFloat(e.target.value),
+                      discount_price: parseFloat(e.target.value) || 0,
                     },
                   })
                 }
